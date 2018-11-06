@@ -250,5 +250,5 @@ func (b *Bundle) downCmdHandler(
 
 // apply implements Option.
 func (f optionFunc) apply(bundle *Bundle) {
-	f.apply(bundle)
+	f(bundle)
 }
