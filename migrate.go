@@ -143,7 +143,7 @@ func (b *Bundle) Build(builder *di.Builder) error {
 
 // DependsOn implements the glue.DependsOn interface.
 func (b *Bundle) DependsOn() []string {
-	return []string{"sql", "zap"}
+	return []string{sql.BundleName, zapBundle.BundleName}
 }
 
 // upCmdHandler is migrate up command handler.
