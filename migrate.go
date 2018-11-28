@@ -84,7 +84,7 @@ func (b *Bundle) Name() string {
 
 // Build implements the glue.Bundle interface.
 func (b *Bundle) Build(builder *di.Builder) error {
-	builder.Add(di.Def{
+	return builder.Add(di.Def{
 		Name: BundleName,
 		Tags: []di.Tag{{
 			Name: glue.TagCliCommand,
@@ -137,8 +137,6 @@ func (b *Bundle) Build(builder *di.Builder) error {
 			return cmd, nil
 		},
 	})
-
-	return nil
 }
 
 // DependsOn implements the glue.DependsOn interface.
