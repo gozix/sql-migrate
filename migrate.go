@@ -1,7 +1,7 @@
 package migrate
 
 import (
-	"path"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gozix/glue"
@@ -77,7 +77,7 @@ func NewBundle(options ...Option) (b *Bundle) {
 	return b
 }
 
-// Key implements the glue.Bundle interface.
+// Name implements the glue.Bundle interface.
 func (b *Bundle) Name() string {
 	return BundleName
 }
@@ -165,21 +165,21 @@ func (b *Bundle) upCmdHandler(
 			return err
 		}
 
-		var dir = cmd.Flag("path").Value.String()
-		if !path.IsAbs(dir) {
+		var path = cmd.Flag("path").Value.String()
+		if !filepath.IsAbs(path) {
 			var appPath string
 			if err = glueRegistry.Fill("app.path", &appPath); err != nil {
 				return err
 			}
 
-			dir = path.Join(appPath, dir)
+			path = filepath.Join(appPath, path)
 		}
 
 		var n int
 		if n, err = migrate.Exec(
 			db.Master(),
 			driver,
-			&migrate.FileMigrationSource{Dir: dir},
+			&migrate.FileMigrationSource{Dir: path},
 			migrate.Up,
 		); err != nil {
 			return err
@@ -219,21 +219,21 @@ func (b *Bundle) downCmdHandler(
 			}
 		}
 
-		var dir = cmd.Flag("path").Value.String()
-		if !path.IsAbs(dir) {
+		var path = cmd.Flag("path").Value.String()
+		if !filepath.IsAbs(path) {
 			var appPath string
 			if err = glueRegistry.Fill("app.path", &appPath); err != nil {
 				return err
 			}
 
-			dir = path.Join(appPath, dir)
+			path = filepath.Join(appPath, path)
 		}
 
 		var n int
 		if n, err = migrate.ExecMax(
 			db.Master(),
 			driver,
-			&migrate.FileMigrationSource{Dir: dir},
+			&migrate.FileMigrationSource{Dir: path},
 			migrate.Down,
 			int(max),
 		); err != nil {
