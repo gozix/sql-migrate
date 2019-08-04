@@ -2,11 +2,11 @@
 package migrate
 
 import (
-	sqlBundle "github.com/gozix/sql"
-	zapBundle "github.com/gozix/zap"
-	"github.com/sarulabs/di"
+	sqlBundle "github.com/gozix/sql/v2"
+	zapBundle "github.com/gozix/zap/v2"
+	"github.com/sarulabs/di/v2"
 
-	"github.com/gozix/sql-migrate/internal/command"
+	"github.com/gozix/sql-migrate/v2/internal/command"
 )
 
 type (

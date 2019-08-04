@@ -4,11 +4,11 @@ package command
 import (
 	"path/filepath"
 
-	"github.com/gozix/glue"
-	sqlBundle "github.com/gozix/sql"
-	zapBundle "github.com/gozix/zap"
+	"github.com/gozix/glue/v2"
+	sqlBundle "github.com/gozix/sql/v2"
+	zapBundle "github.com/gozix/zap/v2"
 	migrate "github.com/rubenv/sql-migrate"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -70,7 +70,7 @@ func DefMigrateUp() di.Def {
 						return err
 					}
 
-					var logger *zapBundle.Logger
+					var logger *zap.Logger
 					if err = ctn.Fill(zapBundle.BundleName, &logger); err != nil {
 						return err
 					}

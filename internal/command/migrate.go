@@ -2,9 +2,9 @@
 package command
 
 import (
-	"github.com/gozix/glue"
+	"github.com/gozix/glue/v2"
 	migrate "github.com/rubenv/sql-migrate"
-	"github.com/sarulabs/di"
+	"github.com/sarulabs/di/v2"
 	"github.com/spf13/cobra"
 )
 
