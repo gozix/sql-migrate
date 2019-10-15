@@ -2,6 +2,8 @@
 package command
 
 import (
+	"context"
+	"errors"
 	"path/filepath"
 	"strconv"
 
@@ -32,17 +34,17 @@ func DefMigrateDown() di.Def {
 						db   *sqlBundle.DB
 					)
 
-					var sqlRegistry *sqlBundle.Registry
-					if err = ctn.Fill(sqlBundle.BundleName, &sqlRegistry); err != nil {
+					var registry *sqlBundle.Registry
+					if err = ctn.Fill(sqlBundle.BundleName, &registry); err != nil {
 						return err
 					}
 
-					if db, err = sqlRegistry.ConnectionWithName(conn); err != nil {
+					if db, err = registry.ConnectionWithName(conn); err != nil {
 						return err
 					}
 
 					var driver string
-					if driver, err = sqlRegistry.DriverWithName(conn); err != nil {
+					if driver, err = registry.DriverWithName(conn); err != nil {
 						return err
 					}
 
@@ -53,16 +55,16 @@ func DefMigrateDown() di.Def {
 						}
 					}
 
-					var glueRegistry glue.Registry
-					if err = ctn.Fill(glue.DefRegistry, &glueRegistry); err != nil {
+					var ctx context.Context
+					if err = ctn.Fill(glue.DefContext, &ctx); err != nil {
 						return err
 					}
 
 					var path = cmd.Flag("path").Value.String()
 					if !filepath.IsAbs(path) {
-						var appPath string
-						if err = glueRegistry.Fill("app.path", &appPath); err != nil {
-							return err
+						var appPath, ok = ctx.Value("app.path").(string)
+						if !ok {
+							return errors.New("app.path is undefined")
 						}
 
 						path = filepath.Join(appPath, path)
