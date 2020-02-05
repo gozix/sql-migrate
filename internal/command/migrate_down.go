@@ -25,7 +25,7 @@ func DefMigrateDown() di.Def {
 		Name: DefMigrateDownName,
 		Build: func(ctn di.Container) (_ interface{}, err error) {
 			return &cobra.Command{
-				Use:   "up",
+				Use:   "down",
 				Short: "Execute a migration to latest available version",
 				Args:  cobra.ExactArgs(0),
 				RunE: func(cmd *cobra.Command, args []string) (err error) {
