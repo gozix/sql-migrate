@@ -30,8 +30,9 @@ func DefMigrateDown() di.Def {
 				Args:  cobra.ExactArgs(0),
 				RunE: func(cmd *cobra.Command, args []string) (err error) {
 					var (
-						conn = cmd.Flag("connection").Value.String()
-						db   *sqlBundle.DB
+						dialect = cmd.Flag("dialect").Value.String()
+						conn    = cmd.Flag("connection").Value.String()
+						db      *sqlBundle.DB
 					)
 
 					var registry *sqlBundle.Registry
@@ -70,10 +71,14 @@ func DefMigrateDown() di.Def {
 						path = filepath.Join(appPath, path)
 					}
 
+					if dialect == "" {
+						dialect = driver
+					}
+
 					var n int
 					if n, err = migrate.ExecMax(
 						db.Master(),
-						driver,
+						dialect,
 						&migrate.FileMigrationSource{Dir: path},
 						migrate.Down,
 						int(max),

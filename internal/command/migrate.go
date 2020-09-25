@@ -12,7 +12,7 @@ import (
 const DefMigrateName = "cli.cmd.migrate"
 
 // DefMigrate is command definition getter.
-func DefMigrate(path, table, schema, connection string) di.Def {
+func DefMigrate(path, table, schema, dialect, connection string) di.Def {
 	migrate.SetTable(table)
 	migrate.SetSchema(schema)
 
@@ -41,6 +41,7 @@ func DefMigrate(path, table, schema, connection string) di.Def {
 			cmd.AddCommand(cmdDown)
 
 			cmd.PersistentFlags().String("path", path, "Path to migrations")
+			cmd.PersistentFlags().String("dialect", dialect, "Dialect name")
 			cmd.PersistentFlags().String("connection", connection, "Connection name")
 
 			return cmd, nil
