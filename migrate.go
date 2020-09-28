@@ -15,6 +15,7 @@ type (
 		path       string
 		table      string
 		schema     string
+		dialect    string
 		connection string
 	}
 
@@ -34,6 +35,13 @@ const BundleName = "sql-migrate"
 func Connection(value string) Option {
 	return optionFunc(func(b *Bundle) {
 		b.connection = value
+	})
+}
+
+// Dialect option.
+func Dialect(value string) Option {
+	return optionFunc(func(b *Bundle) {
+		b.dialect = value
 	})
 }
 
@@ -81,7 +89,7 @@ func (b *Bundle) Name() string {
 // Build implements the glue.Bundle interface.
 func (b *Bundle) Build(builder *di.Builder) error {
 	return builder.Add(
-		command.DefMigrate(b.path, b.table, b.schema, b.connection),
+		command.DefMigrate(b.path, b.table, b.schema, b.dialect, b.connection),
 		command.DefMigrateDown(),
 		command.DefMigrateUp(),
 	)

@@ -29,8 +29,9 @@ func DefMigrateUp() di.Def {
 				Args:  cobra.ExactArgs(0),
 				RunE: func(cmd *cobra.Command, _ []string) (err error) {
 					var (
-						conn = cmd.Flag("connection").Value.String()
-						db   *sqlBundle.DB
+						dialect = cmd.Flag("dialect").Value.String()
+						conn    = cmd.Flag("connection").Value.String()
+						db      *sqlBundle.DB
 					)
 
 					var registry *sqlBundle.Registry
@@ -62,10 +63,14 @@ func DefMigrateUp() di.Def {
 						path = filepath.Join(appPath, path)
 					}
 
+					if dialect == "" {
+						dialect = driver
+					}
+
 					var n int
 					if n, err = migrate.Exec(
 						db.Master(),
-						driver,
+						dialect,
 						&migrate.FileMigrationSource{Dir: path},
 						migrate.Up,
 					); err != nil {
