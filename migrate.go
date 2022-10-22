@@ -1,12 +1,16 @@
-// Package migrate provide sql-migrate bundle.
+// Copyright 2018 Sergey Novichkov. All rights reserved.
+// For the full copyright and license information, please view the LICENSE
+// file that was distributed with this source code.
+
 package migrate
 
 import (
-	sqlBundle "github.com/gozix/sql/v2"
-	zapBundle "github.com/gozix/zap/v2"
-	"github.com/sarulabs/di/v2"
+	"github.com/gozix/di"
+	"github.com/gozix/glue/v3"
+	gzSQL "github.com/gozix/sql/v3"
+	gzZap "github.com/gozix/zap/v3"
 
-	"github.com/gozix/sql-migrate/v2/internal/command"
+	"github.com/gozix/sql-migrate/v3/internal/command"
 )
 
 type (
@@ -30,6 +34,9 @@ type (
 
 // BundleName is default definition name.
 const BundleName = "sql-migrate"
+
+// Bundle implements glue.Bundle interface.
+var _ glue.Bundle = (*Bundle)(nil)
 
 // Connection option.
 func Connection(value string) Option {
@@ -71,7 +78,7 @@ func NewBundle(options ...Option) (b *Bundle) {
 	b = &Bundle{
 		path:       "migrations",
 		table:      "migration",
-		connection: sqlBundle.DEFAULT,
+		connection: gzSQL.DEFAULT,
 	}
 
 	for _, option := range options {
@@ -87,19 +94,31 @@ func (b *Bundle) Name() string {
 }
 
 // Build implements the glue.Bundle interface.
-func (b *Bundle) Build(builder *di.Builder) error {
-	return builder.Add(
-		command.DefMigrate(b.path, b.table, b.schema, b.dialect, b.connection),
-		command.DefMigrateDown(),
-		command.DefMigrateUp(),
+func (b *Bundle) Build(builder di.Builder) error {
+	var tag = "cli.cmd.migrate.subcommand"
+
+	return builder.Apply(
+		di.Provide(
+			command.NewMigrateConstructor(b.path, b.table, b.schema, b.dialect, b.connection),
+			di.Constraint(0, di.WithTags(tag)),
+			di.Tags{{
+				Name: glue.TagCliCommand,
+			}},
+		),
+		di.Provide(command.NewMigrateDown, di.Tags{{
+			Name: tag,
+		}}),
+		di.Provide(command.NewMigrateUp, di.Tags{{
+			Name: tag,
+		}}),
 	)
 }
 
 // DependsOn implements the glue.DependsOn interface.
 func (b *Bundle) DependsOn() []string {
 	return []string{
-		sqlBundle.BundleName,
-		zapBundle.BundleName,
+		gzSQL.BundleName,
+		gzZap.BundleName,
 	}
 }
 
