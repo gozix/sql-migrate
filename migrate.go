@@ -101,9 +101,7 @@ func (b *Bundle) Build(builder di.Builder) error {
 		di.Provide(
 			command.NewMigrateConstructor(b.path, b.table, b.schema, b.dialect, b.connection),
 			di.Constraint(0, di.WithTags(tag)),
-			di.Tags{{
-				Name: glue.TagCliCommand,
-			}},
+			glue.AsCliCommand(),
 		),
 		di.Provide(command.NewMigrateDown, di.Tags{{
 			Name: tag,
