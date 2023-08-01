@@ -109,6 +109,9 @@ func (b *Bundle) Build(builder di.Builder) error {
 		di.Provide(command.NewMigrateUp, di.Tags{{
 			Name: tag,
 		}}),
+		di.Provide(command.NewMigrateCreate, di.Tags{{
+			Name: tag,
+		}}),
 	)
 }
 
