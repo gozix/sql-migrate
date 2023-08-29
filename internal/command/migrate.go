@@ -11,10 +11,11 @@ import (
 
 // NewMigrateConstructor is command constructor getter.
 func NewMigrateConstructor(
-	path, table, schema, dialect, connection string,
+	path, table, schema, dialect, connection string, ignoreUnknown bool,
 ) func(subcommands []*cobra.Command) *cobra.Command {
 	migrate.SetTable(table)
 	migrate.SetSchema(schema)
+	migrate.SetIgnoreUnknown(ignoreUnknown)
 
 	return func(subcommands []*cobra.Command) *cobra.Command {
 		var cmd = &cobra.Command{
@@ -27,6 +28,7 @@ func NewMigrateConstructor(
 		cmd.PersistentFlags().String("path", path, "Path to migrations")
 		cmd.PersistentFlags().String("dialect", dialect, "Dialect name")
 		cmd.PersistentFlags().String("connection", connection, "Connection name")
+		cmd.PersistentFlags().Bool("ignore-unknown", ignoreUnknown, "Ignore unknown migrations")
 
 		return cmd
 	}

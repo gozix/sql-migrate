@@ -16,11 +16,12 @@ import (
 type (
 	// Bundle implements the glue.Bundle interface.
 	Bundle struct {
-		path       string
-		table      string
-		schema     string
-		dialect    string
-		connection string
+		path          string
+		table         string
+		schema        string
+		dialect       string
+		connection    string
+		ignoreUnknown bool
 	}
 
 	// Option interface.
@@ -73,6 +74,13 @@ func Schema(value string) Option {
 	})
 }
 
+// IgnoreUnknown option
+func IgnoreUnknown(value bool) Option {
+	return optionFunc(func(b *Bundle) {
+		b.ignoreUnknown = value
+	})
+}
+
 // NewBundle create bundle instance.
 func NewBundle(options ...Option) (b *Bundle) {
 	b = &Bundle{
@@ -99,7 +107,7 @@ func (b *Bundle) Build(builder di.Builder) error {
 
 	return builder.Apply(
 		di.Provide(
-			command.NewMigrateConstructor(b.path, b.table, b.schema, b.dialect, b.connection),
+			command.NewMigrateConstructor(b.path, b.table, b.schema, b.dialect, b.connection, b.ignoreUnknown),
 			di.Constraint(0, di.WithTags(tag)),
 			glue.AsCliCommand(),
 		),

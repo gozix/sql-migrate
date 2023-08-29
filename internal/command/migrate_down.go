@@ -63,6 +63,13 @@ func NewMigrateDown(ctn di.Container) *cobra.Command {
 					dialect = driver
 				}
 
+				var ignoreUnknown bool
+				if ignoreUnknown, err = cmd.Flags().GetBool("ignore-unknown"); err != nil {
+					return err
+				}
+
+				migrate.SetIgnoreUnknown(ignoreUnknown)
+
 				var n int
 				if n, err = migrate.ExecMax(
 					db.Master(),
